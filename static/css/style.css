@@ -1,0 +1,184 @@
+/* Style for the "Show" button */
+.show-button {
+    background-color: #000000; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    cursor: pointer; /* Cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px 10px; /* Some padding */
+    margin-left: 10px; /* Space from the message text */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  }
+  
+  .show-button:hover {
+    background-color: #45a049; /* Slightly darker shade of green on hover */
+  }
+  
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+    cursor: pointer;
+  }
+  
+
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #ffffff;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.chat-container {
+    width: 90%;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+}
+
+.chat-header {
+    padding: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chat-body {
+    height: 400px;
+    overflow-y: auto;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.chat-input {
+    display: flex;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.form-control, .btn-primary {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 20px;
+    outline: none;
+}
+
+.form-control {
+    flex-grow: 1;
+    margin-right: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.btn-primary {
+    cursor: pointer;
+    background: linear-gradient(45deg, #6e6e6e, #4a4a4a);
+    color: #fff;
+    transition: background 0.4s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #4a4a4a, #2e2e2e);
+}
+
+.user-message, .ai-message {
+    max-width: 80%;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 20px;
+    font-size: 16px;
+    position: relative;
+    animation: fadeIn 0.5s ease-out forwards;
+    color: #000;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-message {
+    background-color: #575fcf;
+    color: #fff;
+    margin-left: auto;
+}
+
+.ai-message {
+    background-color: #05c46b;
+    color: #fff;
+}
+/* Enhancements for the chat header */
+.chat-header {
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    background-color: #007bff; /* Adjust the color to fit your theme */
+    position: relative;
+}
+
+/* Styling for the dropdown */
+/* Enhancements for the dropdown to center text */
+.jd-action-dropdown {
+    display: block;
+    width: 80%; /* Adjust width as needed */
+    margin: 10px auto; /* Center the dropdown on the page */
+    padding: 10px 20px; /* Adjust padding as needed, can help with vertical centering */
+    border: 2px solid #007bff; /* Border color */
+    border-radius: 5px; /* Rounded corners for aesthetics */
+    font-size: 16px; /* Suitable font size for readability */
+    color: #007bff; /* Text color, adjust as per your theme */
+    background-color: #fff; /* Dropdown background color */
+    cursor: pointer; /* Change cursor on hover to indicate it's clickable */
+    text-align-last: center; /* Center the selected option text */
+    -moz-text-align-last: center; /* Firefox-specific property for centering */
+    text-align: center; /* For the dropdown text, but might not work in all browsers */
+}
+
+/* Style adjustments for options to attempt center alignment in browsers where possible */
+.jd-action-dropdown option {
+    text-align: center;
+}
+
+/* Adjust focus and hover effects for better UI interaction feedback */
+.jd-action-dropdown:focus {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.jd-action-dropdown:hover {
+    background-color: #e7f3ff; /* Lighter shade for hover effect */
+}
+

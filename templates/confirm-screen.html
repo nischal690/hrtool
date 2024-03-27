@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation Screen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/confirm_screenstyle.css') }}">
+</head>
+<body>
+
+<div id="confirmation-container" class="container">
+    <h1>Confirmation</h1>
+    <p>Please wait, we are processing your request...</p>
+    <!-- This is where the loading spinner would go -->
+    <div class="loading-circle"></div>
+    <!-- Place this where you want to show the scoring method -->
+    <div id="scoring-method-display" style="display: none;"></div>
+  
+    <!-- You can add more elements here as needed, such as a progress bar, status messages, etc. -->
+</div>
+
+<script src="{{ url_for('static', filename='js/confirm_screen.js') }}"></script> <!-- Link to your JavaScript file if necessary -->
+</body>
+</html>

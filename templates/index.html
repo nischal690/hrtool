@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Powered Recruiter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Custom styles for the Confirm button */
+        .btn-confirm {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            padding: 10px 24px; /* Some padding */
+            font-size: 16px; /* Adjust font size */
+            border: none; /* No border */
+            cursor: pointer; /* Cursor on hover */
+            border-radius: 5px; /* Rounded corners */
+            transition: all 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        .btn-confirm:hover {
+            background-color: #45a049; /* Darker shade of green on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                AI Powered Recruiter
+                <select class="jd-action-dropdown" id="jd-action">
+                    <option value="">Select Action</option>
+                    <option value="provide-jd">Provide a Job description</option>
+                    <option value="create-new-jd" disabled>Create a New Job description (Coming Soon)</option>
+                </select>
+            </div>
+            <div class="chat-body" id="chat-body"></div>
+            <div class="chat-input">
+                <input type="text" class="form-control" id="user-input" placeholder="Type your message...">
+                <button class="btn btn-primary" id="send-btn">Send</button>
+                <button class="btn btn-confirm" id="confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        document.getElementById('jd-action').addEventListener('change', function() {
+            var action = this.value;
+            console.log("Selected action: ", action);
+        });
+    </script>
+</body>
+</html>
