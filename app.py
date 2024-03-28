@@ -19,7 +19,6 @@ db = firestore.client()
 
 
 
-
 app = Flask(__name__)
 conversation_memory = ConversationBufferMemory()
 
@@ -86,7 +85,8 @@ def chat():
 
 def confirm_evaluation(chathistory):
     print("Starting evaluation with chat history:")
-    print(chathistory[:500])  # Print the first 500 characters of the chat history for a quick overview
+    print(chathistory[:500]) 
+    global doc_id # Print the first 500 characters of the chat history for a quick overview
 
     prompt_template = PromptTemplate.from_template("""As an expert in data extraction and knowledge manipulation, you are tasked with analyzing a provided chat history ({chathistory}). Your goal is to identify a job description within this chat history and refine or reshape it based on any modifications mentioned in the conversation. If there are no modifications outlined, you should maintain the original description, ensuring it is as comprehensive and detailed as possible.
 
@@ -121,7 +121,7 @@ Note: You are allowed to improvise both the scoring method and the job descripti
     llm = LLMChain(llm=custom_llm, prompt=prompt_template, output_parser=output_parser, verbose=False)
     
     try:
-        llm_output = llm.run(prompt_template.format(chathistory=chathistory,))
+        llm_output = llm.run(prompt_template.format(chathistory=chathistory))
         print("LLM Output received successfully.")
     except Exception as e:
         print("Error running LLM:", e)
@@ -153,6 +153,7 @@ Note: You are allowed to improvise both the scoring method and the job descripti
     doc_id = doc_ref.id
 
     print("Data storage operation completed.")
+    
     fetch_scoring_method(doc_id)
 
     
@@ -161,6 +162,9 @@ def confirm():
     # You might need to modify how you access chathistory depending on its scope and how it's updated
     
     confirm_evaluation(chathistory)
+    
+    
+    print(type(confirm_evaluation(chathistory)))
     # Depending on what confirm_evaluation does, you might want to return something to the client
     return jsonify({"message": "Confirmation processed"}), 200
 @app.route('/confirm-screen')
@@ -174,10 +178,10 @@ def fetch_scoring_method(doc_id):
     if doc.exists:
         # Extract the 'scoring_method' field from the document
         scoring_method = doc.to_dict().get('scoring_method', 'No scoring method found')
-        print(f"Scoring Method: {scoring_method}")
+        
         return scoring_method
     else:
-        print("Document does not exist.")
+        
         return None
 
 if __name__ == "__main__":
