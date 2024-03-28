@@ -15,6 +15,7 @@ firebase_admin.initialize_app(cred)
 from firebase_admin import firestore
 
 db = firestore.client()
+document = ""
 
 
 
@@ -85,8 +86,7 @@ def chat():
 
 def confirm_evaluation(chathistory):
     print("Starting evaluation with chat history:")
-    print(chathistory[:500]) 
-    global doc_id # Print the first 500 characters of the chat history for a quick overview
+    print(chathistory[:500])  # Print the first 500 characters of the chat history for a quick overview
 
     prompt_template = PromptTemplate.from_template("""As an expert in data extraction and knowledge manipulation, you are tasked with analyzing a provided chat history ({chathistory}). Your goal is to identify a job description within this chat history and refine or reshape it based on any modifications mentioned in the conversation. If there are no modifications outlined, you should maintain the original description, ensuring it is as comprehensive and detailed as possible.
 
@@ -107,7 +107,8 @@ Note: You are allowed to improvise both the scoring method and the job descripti
         ResponseSchema(name="job_description", description="extracted job description"),
         ResponseSchema(
             name="scoring_method",
-            description="extracted scoring method ",
+            description="extracted scoring method (valid JSON)",
+           
         ),
     ]
     output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
@@ -143,7 +144,7 @@ Note: You are allowed to improvise both the scoring method and the job descripti
     }
 
     # Print the data to be stored for a final check
-    print("Data to be stored:", data)
+    
 
     # Your database storage operation here
     # Example:
@@ -153,35 +154,51 @@ Note: You are allowed to improvise both the scoring method and the job descripti
     doc_id = doc_ref.id
 
     print("Data storage operation completed.")
-    
     fetch_scoring_method(doc_id)
+   
 
     
 @app.route("/confirm", methods=["POST"])
 def confirm():
-    # You might need to modify how you access chathistory depending on its scope and how it's updated
-    
+    # Assuming confirm_evaluation updates or processes the chat history in some way
     confirm_evaluation(chathistory)
     
     
-    print(type(confirm_evaluation(chathistory)))
-    # Depending on what confirm_evaluation does, you might want to return something to the client
-    return jsonify({"message": "Confirmation processed"}), 200
+    # Fetching the scoring method as a JSON object
+    print( "test" + document)
+    
+    # Embedding the scoring_method_json directly into the response JSON
+    response_data = {
+        "message": "Confirmation processed",
+        "scoringMethod": document  # This assumes fetch_scoring_method returns a JSON-serializable object
+    }
+    
+    # Returning the combined JSON
+    return jsonify(response_data), 200
 @app.route('/confirm-screen')
 def confirm_screen():
     return render_template('confirm-screen.html')
 def fetch_scoring_method(doc_id):
+
+    global document
+
+    
     # Fetch the document by ID
     doc_ref = db.collection('jobDescriptions').document(doc_id)
+
     doc = doc_ref.get()
     
     if doc.exists:
         # Extract the 'scoring_method' field from the document
-        scoring_method = doc.to_dict().get('scoring_method', 'No scoring method found')
         
+        scoring_method = doc.to_dict().get('scoring_method', 'No scoring method found')
+        print(f"Scoring Method: {scoring_method}")
+        document = str(scoring_method)
+
+          
         return scoring_method
     else:
-        
+        print("Document does not exist.")
         return None
 
 if __name__ == "__main__":

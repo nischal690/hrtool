@@ -25,4 +25,20 @@ document.addEventListener('DOMContentLoaded', function() {
       spinner.style.display = 'none'; // Ensure spinner is hidden on error
     });
   });
-  
+document.getElementById('reload-button').addEventListener('click', function() {
+    fetch('/confirm', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // No need to send chathistory as it's maintained on the server
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Confirmation processed:', data);
+        // Process the response here, e.g., display a message to the user
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+});
