@@ -1,4 +1,5 @@
 import os
+import traceback
 from flask import Flask, jsonify, render_template, request
 import logging
 from langchain.chains import ConversationChain
@@ -158,7 +159,7 @@ Note: You are allowed to improvise both the scoring method and the job descripti
 
     print("Data storage operation completed.")
     fetch_scoring_method(doc_id)
-    fetch_job_description(doc_id)
+    keyword_job_description(llm_output['job_description'],doc_id) 
    
 
     
@@ -221,20 +222,81 @@ def trigger_scrap():
     app.logger.info("Scraping successful")
     return jsonify({"message": "Scraping completed", "data": result}), 200 
 
-def fetch_job_description(doc_id):
-    print("Fetching job description...")
-    # Assuming db is a predefined database client instance
-    doc_ref = db.collection('jobDescriptions').document(doc_id)
-    doc = doc_ref.get()
+def keyword_job_description(job_description1,doc_id):
+    print("DOCUMENT ID: ", doc_id)
+    print("*** Start of keyword_job_description ***")  # Indicates entering the function
+    print("Input job description:", job_description1)
+    prompt_template = PromptTemplate.from_template("""As an expert in extracting essential information from job descriptions : {job_description1}, your task is to generate and extract important keywords and determine the minimum and maximum experience required. 
+
+### Instructions:
+1. Carefully analyze the job description to identify relevant keywords.
+2. It is crucial to focus on extracting keywords that are significant and directly related to the job role.
+3. Take into consideration the context and specifics of the job description to generate accurate keywords.
+4. Avoid creating random or irrelevant keywords that do not align with the job requirements.
+5. Determine the minimum and maximum experience required, if explicitly mentioned in the job description.
+
+If the minimum or maximum experience is not explicitly stated in the job description, please leave the corresponding field empty rather than making a prediction. 
+NOTE : you have to return in json format with the following fields : keywords, min_experience, max_experience and keyword should be a list of keywords extracted from the job description. and min_experience and max_experience should be integers in years.
+---
+Ensure that the keywords and experience you provide are meaningful and closely tied to the job role described in the text."""
+)
+
+    response_schemas = [
+        ResponseSchema(name="keywords", description="extracted keywords" ),
+        ResponseSchema(
+            name="min_experience",
+            
+            description="minimum experience required (if explicitly mentioned)",
+             # Specify the type as an integer for the 'min_experience' field
+           
+        ),
+        ResponseSchema(
+            name="max_experience",
+            
+            description="maximum experience required (if explicitly mentioned)",
+              # Specify the type as an integer for the 'max_experience' field
+           
+        ),
+    ]
+    output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+    try:
+        prompt = prompt_template.format(job_description1=job_description1)
+        print("Formatted prompt sent to LLM:", prompt[:500])
+        print(prompt[:500]) 
+
+        custom_llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key="AIzaSyDIJnTZe1rj_l9PLQtnSpl8L6U_vLBIbK0")
+        llm = LLMChain(llm=custom_llm, prompt=prompt_template, output_parser=output_parser, verbose=False)
+        llm_output = llm.run(prompt_template.format(job_description1=job_description1))
+
+        print("LLM Raw Output:", llm_output)  # Keep for debugging if needed
+
+        # Validate LLM output 
+        if not all(key in llm_output for key in ['keywords', 'min_experience', 'max_experience']):
+            raise ValueError("LLM Output missing required fields")
+        if not isinstance(llm_output['keywords'], list):
+            raise ValueError("Keywords field should be a list")
+
+        # Convert experience to integers (with a default)
+        llm_output['min_experience'] = int(llm_output['min_experience']) if llm_output['min_experience'] else 0
+        llm_output['max_experience'] = int(llm_output['max_experience']) if llm_output['max_experience'] else 0
+
+        # ... (Database update - assuming 'db' is configured correctly) ...
+        doc_ref = db.collection('jobDescriptions').document(doc_id)
+
+        data = {
+            'keywords': "   ",
+            'min_experience':  "",
+            'max_experience': "",
+        }
+
+        doc_ref.set(data)
+
+    except Exception as e:
+        print("An error occurred:", e)
+        print(traceback.format_exc())  # Print detailed error information
+
+print("LLM Output received successfully.") 
     
-    if not doc.exists:
-        print("Document does not exist.")
-        return None
-    
-    job_description = doc.to_dict().get('job_description', 'No job description found')
-    print(f"Job Descriptiontest: {job_description}")
-    
-    # Define the prompt template
     
 
 if __name__ == "__main__":
