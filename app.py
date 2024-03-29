@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, render_template, request
 import logging
 from langchain.chains import ConversationChain
@@ -9,6 +10,8 @@ from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 import json
 import firebase_admin
 from firebase_admin import credentials
+import subprocess
+
 
 cred = credentials.Certificate(r"C:\Users\Administrator\hrtool\hrtooljd-firebase-adminsdk-mbimv-45e1cfca77.json")
 firebase_admin.initialize_app(cred)
@@ -155,6 +158,7 @@ Note: You are allowed to improvise both the scoring method and the job descripti
 
     print("Data storage operation completed.")
     fetch_scoring_method(doc_id)
+    fetch_job_description(doc_id)
    
 
     
@@ -172,6 +176,7 @@ def confirm():
         "message": "Confirmation processed",
         "scoringMethod": document  # This assumes fetch_scoring_method returns a JSON-serializable object
     }
+    
     
     # Returning the combined JSON
     return jsonify(response_data), 200
@@ -200,6 +205,37 @@ def fetch_scoring_method(doc_id):
     else:
         print("Document does not exist.")
         return None
+    
+    
+from scrap import perform_scraping_task  
+
+@app.route('/trigger-scrap', methods=['POST'])
+def trigger_scrap():
+    result = perform_scraping_task()
+
+    if 'error' in result:
+        app.logger.error("Scraping error: {}".format(result['error']))
+        return jsonify({"message": "Scraping failed", "error": result['error']}), 500
+
+    # Process the successful scraped data in 'result'
+    app.logger.info("Scraping successful")
+    return jsonify({"message": "Scraping completed", "data": result}), 200 
+
+def fetch_job_description(doc_id):
+    print("Fetching job description...")
+    # Assuming db is a predefined database client instance
+    doc_ref = db.collection('jobDescriptions').document(doc_id)
+    doc = doc_ref.get()
+    
+    if not doc.exists:
+        print("Document does not exist.")
+        return None
+    
+    job_description = doc.to_dict().get('job_description', 'No job description found')
+    print(f"Job Descriptiontest: {job_description}")
+    
+    # Define the prompt template
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

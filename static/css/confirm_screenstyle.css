@@ -42,7 +42,8 @@ h1 {
   border-left-color: #4CAF50;
   animation: spin 1s ease infinite;
   /* Center the spinner */
-  margin: 20px 0; /* Adds margin to top and bottom */
+  margin: 20px 0;
+  display: none; /* Adds margin to top and bottom */
 }
 
 @keyframes spin {
@@ -54,3 +55,86 @@ h1 {
   }
 }
 
+.loading-circle.show {
+  /* Spinner Show/Hide */
+  display: block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#scoring-method-display.success {
+  /* Success Message Styling */
+  display: block;
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 5px;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+#scoring-method-display.error {
+  /* Error Message Styling */
+  display: block;
+  background-color: #f44336; /* Red background */
+  color: white; /* White text */
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 5px;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out forwards;
+}
+/* Reload button styling */
+.reload-icon {
+  position: fixed; /* Fixed position to keep it on-screen */
+  top: 20px; /* Adjusted for spacing from the top */
+  right: 20px; /* Adjusted for spacing from the right */
+  z-index: 1000; /* Ensures it stays above other content */
+  cursor: pointer;
+  padding: 10px;
+  background-color: #f0f0f0; /* Example background color, match this to your site's theme */
+  border-radius: 50%; /* Circular shape */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Soft shadow for depth */
+}
+
+.reload-icon:hover {
+  background-color: #e0e0e0; /* Slightly darker on hover for feedback */
+}
+
+.fas.fa-redo {
+  color: #333; /* Icon color, adjust as needed */
+  font-size: 24px; /* Icon size */
+}
+/* Container for the Next button for additional styling if needed */
+.next-button-container {
+  text-align: center; /* Center the button horizontally */
+  margin-top: 20px; /* Spacing from the element above */
+}
+
+/* Styling for the Next button */
+#next-button {
+  background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); /* Beautiful gradient background */
+  border: none; /* Removes the default border */
+  color: white; /* Text color */
+  padding: 12px 24px; /* Padding for button size */
+  font-size: 18px; /* Text size */
+  font-weight: bold; /* Text weight */
+  border-radius: 30px; /* Rounded corners for a modern look */
+  cursor: pointer; /* Changes the cursor to a pointer on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for the hover effect */
+  outline: none; /* Removes the outline to keep the design clean */
+}
+
+#next-button:hover {
+  background-image: linear-gradient(to right, #4facfe 90%, #00f2fe 10%); /* Slightly adjust the gradient on hover for a subtle effect */
+}

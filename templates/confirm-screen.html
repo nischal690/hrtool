@@ -5,23 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmation Screen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/confirm_screenstyle.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
 
 <div id="confirmation-container" class="container">
     <h1>Confirmation</h1>
-    <div class="reload-icon" id="reload-button"  title="Reload">
-        &#x21bb;
+    <!-- Adjusted for a cleaner look & added icon for reload -->
+    <div class="reload-icon" id="reload-button" title="Reload">
+        <i class="fas fa-redo"></i>
     </div>
     <p>Please wait, we are processing your request...</p>
     <!-- This is where the loading spinner would go -->
     <div class="loading-circle"></div>
-    <!-- Place this where you want to show the scoring method -->
-    <div id="scoring-method-display" style="display: block;" >hello</div>
-  
-    <!-- You can add more elements here as needed, such as a progress bar, status messages, etc. -->
+    <!-- Updated for a single, dynamic scoring method display -->
+    <div id="scoring-method-display"></div>
+
+    <div class="next-button-container">
+        <button id="next-button" title="Go to the next step">Next</button>
+    </div>
+
+    <!-- Additional UI elements can go here -->
 </div>
 
-<script src="{{ url_for('static', filename='js/confirm_screen.js') }}"></script> <!-- Link to your JavaScript file if necessary -->
+<script src="{{ url_for('static', filename='js/confirm_screen.js') }}"></script>
 </body>
 </html>

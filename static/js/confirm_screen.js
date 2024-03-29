@@ -1,8 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
+  setupFetchOperation();
+});
+
+document.getElementById('reload-button').addEventListener('click', function() {
+  setupFetchOperation();
+});
+
+function setupFetchOperation() {
   const spinner = document.querySelector('.loading-circle');
   const scoringMethodDisplay = document.getElementById('scoring-method-display');
+  const confirmationContainer = document.getElementById('confirmation-container');
 
-  spinner.style.display = 'block';
+  spinner.classList.add('show');
+  hideNextButton();
 
   fetch('/confirm', {
     method: 'POST',
@@ -11,40 +21,68 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })
   .then(response => response.json())
- .then(data => {
-  console.log('Confirmation processed:', data);
-  spinner.style.display = 'none'; // Hide spinner upon success
+  .then(data => {
+    console.log('Confirmation processed:', data);
 
-  if (data.scoringMethod) {
-    const correctedJSON = data.scoringMethod.replace(/'/g, '"');
-    try {
-      const scoringMethodObject = JSON.parse(correctedJSON);
-      console.log('Parsed Scoring Method Object:', scoringMethodObject); // Debugging output
+    spinner.classList.remove('show');
 
-      // Attempt to access the 'name' property
-      const scoringMethodName = scoringMethodObject.total_points;
-      console.log('Scoring Method Name:', scoringMethodName); // Debugging output
-
-      if (scoringMethodName) {
-        scoringMethodDisplay.innerText = `Scoring Method: ${scoringMethodName}`;
-        scoringMethodDisplay.style.display = 'block';
-      } else {
-        // Handle the case where 'name' is undefined
-        console.error('Name property is undefined in the parsed object:', scoringMethodObject);
-        scoringMethodDisplay.innerText = 'Scoring Method: Name not found';
-      }
-    } catch (e) {
-      console.error('Error parsing scoring method:', e);
+    if (data.scoringMethod) {
+      scoringMethodDisplay.innerText = 'Successfully created Scoring Method for provided job description';
+      scoringMethodDisplay.classList.add('success');
+      showNextButton(confirmationContainer);
+    } else {
+      scoringMethodDisplay.innerText = 'Scoring Method data not found';
+      scoringMethodDisplay.classList.add('error');
     }
-  }
-})
-
   })
   .catch(error => {
     console.error('Error during confirmation:', error);
-    spinner.style.display = 'none'; // Ensure spinner is hidden on error
+    spinner.classList.remove('show');
+    scoringMethodDisplay.innerText = 'Error in fetching Scoring Method data';
+    scoringMethodDisplay.classList.add('error');
   });
+}
 
+function showNextButton(container) {
+  if (!document.getElementById('next-button')) {
+    const nextButton = document.createElement('button');
+    nextButton.id = 'next-button';
+    nextButton.innerText = 'Next';
+    nextButton.title = 'Go to the next step';
+    nextButton.classList.add('next-button');
+
+    nextButton.addEventListener('click', function() {
+      console.log('Next button clicked');
+      fetch('/trigger-scrap', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          console.log(data.message);
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+    });
+
+    container.appendChild(nextButton);
+  }
+}
+
+function hideNextButton() {
+  const nextButton = document.getElementById('next-button');
+  if (nextButton) {
+    nextButton.remove();
+  }
+}
 
 // Assuming the second part of your code does not need to change for this specific issue
 document.getElementById('reload-button').addEventListener('click', function() {

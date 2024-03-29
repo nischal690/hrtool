@@ -182,3 +182,17 @@ body, html {
     background-color: #e7f3ff; /* Lighter shade for hover effect */
 }
 
+.loading-circle.show {
+    /* Spinner Show/Hide */
+    display: block;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+
+  
+
