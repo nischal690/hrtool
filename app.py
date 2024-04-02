@@ -16,12 +16,13 @@ from werkzeug.utils import secure_filename
 
 from uploadedresumeprocessing import process_uploaded_file
 
-cred = credentials.Certificate(r"C:\Users\Administrator\hrtool\hrtooljd-firebase-adminsdk-mbimv-45e1cfca77.json")
+cred = credentials.Certificate(r"hrtooljd-firebase-adminsdk-mbimv-45e1cfca77.json")
 firebase_admin.initialize_app(cred)
 from firebase_admin import firestore
 
 db = firestore.client()
 document = ""
+jobDescripton = None
 
 
 
@@ -224,7 +225,7 @@ def upload():
         file.save('uploads/' + file.filename)  
 
         # Pass to fileprocessing module
-        process_uploaded_file(file)
+        process_uploaded_file(file, )
         return redirect('/select-platform')  # Or any other relevant response
     else:
         return "No file was uploaded."
