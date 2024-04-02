@@ -1,0 +1,113 @@
+/* confirm_screenstyle.css */
+body {
+    font-family: 'Arial', sans-serif;
+    animation: gradientBG 15s ease infinite;
+    background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .upload-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 400px;
+    width: 100%;
+}
+.hidden { display: none; }
+        .credentials-box {
+            border: 2px solid #007BFF; /* Blue border */
+            border-radius: 5px; /* Rounded corners */
+            padding: 20px; /* Space inside the box */
+            margin-top: 20px; /* Space above the box */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            background-color: #f9f9f9; /* Light background */
+        }
+        .credentials-header {
+            margin-bottom: 15px; /* Space below the header */
+            color: #333; /* Dark grey color */
+            font-size: 18px; /* Larger font size */
+        }
+.upload-label, #resdex-credentials label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: #333;
+}
+.platform-select, #resdex-username, #resdex-password, #file-upload {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+#file-upload {
+    cursor: pointer;
+}
+#resdex-credentials {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: small;
+}
+.hidden { 
+    display: none; 
+}
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+}
+.upload-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 300px;
+}
+
+.upload-label {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.platform-select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.platform-select:focus {
+    border-color: #007bff;
+    background-color: #e7f0fe;
+}
+
+.upload-action {
+    min-height: 50px;
+    /* Style as needed */
+}

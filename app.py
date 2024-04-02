@@ -1,6 +1,6 @@
 import os
 import traceback
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request
 import logging
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
@@ -12,7 +12,9 @@ import json
 import firebase_admin
 from firebase_admin import credentials
 import subprocess
+from werkzeug.utils import secure_filename
 
+from uploadedresumeprocessing import process_uploaded_file
 
 cred = credentials.Certificate(r"C:\Users\Administrator\hrtool\hrtooljd-firebase-adminsdk-mbimv-45e1cfca77.json")
 firebase_admin.initialize_app(cred)
@@ -25,6 +27,8 @@ document = ""
 
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads/'
+app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'docx'}
 conversation_memory = ConversationBufferMemory()
 
 template = """As an expert AI-based recruiter, your task is to develop a detailed scoring system for resume evaluation centered around key competencies listed in the job description. The scoring system should be point-based and total a maximum of 1000 points. Begin by asking the user for the job description and seek clarification on required skills and their respective priority levels according to the role. 
@@ -63,6 +67,7 @@ def home():
     global conversation_memory  # Access the global memory object
     conversation_memory.clear()  # Reset the memory
     return render_template("index.html")
+
 
 
 @app.route("/chat", methods=["POST"])
@@ -168,8 +173,6 @@ def confirm():
     # Assuming confirm_evaluation updates or processes the chat history in some way
     confirm_evaluation(chathistory)
     
-    
-    # Fetching the scoring method as a JSON object
     print( "test" + document)
     
     # Embedding the scoring_method_json directly into the response JSON
@@ -177,8 +180,7 @@ def confirm():
         "message": "Confirmation processed",
         "scoringMethod": document  # This assumes fetch_scoring_method returns a JSON-serializable object
     }
-    
-    
+
     # Returning the combined JSON
     return jsonify(response_data), 200
 @app.route('/confirm-screen')
@@ -209,6 +211,23 @@ def fetch_scoring_method(doc_id):
     
     
 from scrap import perform_scraping_task  
+
+@app.route('/select-platform')
+def select_platform():
+    return render_template('select-platform.html')
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'file-upload' in request.files:
+        file = request.files['file-upload']
+        # Save the file (optional, if you don't need to save it directly)
+        file.save('uploads/' + file.filename)  
+
+        # Pass to fileprocessing module
+        process_uploaded_file(file)
+        return redirect('/select-platform')  # Or any other relevant response
+    else:
+        return "No file was uploaded."
 
 @app.route('/trigger-scrap', methods=['POST'])
 def trigger_scrap():
@@ -267,37 +286,29 @@ Ensure that the keywords and experience you provide are meaningful and closely t
         custom_llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key="AIzaSyDIJnTZe1rj_l9PLQtnSpl8L6U_vLBIbK0")
         llm = LLMChain(llm=custom_llm, prompt=prompt_template, output_parser=output_parser, verbose=False)
         llm_output = llm.run(prompt_template.format(job_description1=job_description1))
+        json_data = llm_output
 
-        print("LLM Raw Output:", llm_output)  # Keep for debugging if needed
+        print("LLM Raw Output:", json_data)  # Keep for debugging if needed
 
-        # Validate LLM output 
-        if not all(key in llm_output for key in ['keywords', 'min_experience', 'max_experience']):
-            raise ValueError("LLM Output missing required fields")
-        if not isinstance(llm_output['keywords'], list):
-            raise ValueError("Keywords field should be a list")
-
-        # Convert experience to integers (with a default)
-        llm_output['min_experience'] = int(llm_output['min_experience']) if llm_output['min_experience'] else 0
-        llm_output['max_experience'] = int(llm_output['max_experience']) if llm_output['max_experience'] else 0
-
+      
         # ... (Database update - assuming 'db' is configured correctly) ...
         doc_ref = db.collection('jobDescriptions').document(doc_id)
+         # Keep for debugging if needed
 
         data = {
-            'keywords': "   ",
-            'min_experience':  "",
-            'max_experience': "",
+            'keywords':  json_data['keywords']  ,
+            'min_experience':  json_data['min_experience']  ,
+            'max_experience': json_data['max_experience']  ,
         }
 
-        doc_ref.set(data)
+        doc_ref.update(data)
+
 
     except Exception as e:
         print("An error occurred:", e)
         print(traceback.format_exc())  # Print detailed error information
 
 print("LLM Output received successfully.") 
-    
-    
 
 if __name__ == "__main__":
-    app.run(debug=False,host='0.0.0.0')
+    app.run(debug=True,host='0.0.0.0')

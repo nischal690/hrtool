@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Upload</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/select-platform.css') }}">
+</head>
+<body>
+
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <div class="upload-container">
+        <label for="platform-select" class="upload-label">Choose a platform:</label>
+        <select id="platform-select" name="platforms" class="platform-select">
+            <option value="">Select...</option>
+            <option value="manual">Upload Resume Manually</option>
+            <option value="naukri">Naukri Resdex</option>
+            <option value="linkedin" disabled>LinkedIn (Coming Soon)</option>
+        </select>
+
+                <div id="manual-upload" class="hidden">  
+            <label for="file-upload" style="font-size: 16px;">Upload Your Resume:</label><br> 
+            <input type="file" id="file-upload" name="file-upload" class="file-input" accept=".pdf, .docx">
+            <p style="font-style: italic; font-size: 14px;">Accepted formats: PDF, Word (.doc, .docx)</p>
+        </div>
+
+                <div id="resdex-credentials" class="credentials-box hidden">
+            <p class="credentials-header" style="font-size: 16px;">Fill your Naukri Resdex credentials</p>
+            <label for="resdex-username" style="font-size: 16px;">Resdex Username:</label>
+            <input type="text" id="resdex-username" name="resdex_username"><br>
+            <label for="resdex-password" style="font-size: 16px;">Resdex Password:</label>
+            <input type="password" id="resdex-password" name="resdex_password">
+        </div>
+
+                <input type="submit" value="Upload Resume" id="upload-btn" class="hidden">
+    </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/select-platform.js') }}"></script>
+<script>
+    document.getElementById("platform-select").addEventListener("change", function() {
+        var value = this.value;
+        const manualUpload = document.getElementById("manual-upload"); // Get the container
+        const fileUpload = document.getElementById("file-upload");
+        const uploadBtn = document.getElementById("upload-btn");
+        const resdexCredentials = document.getElementById("resdex-credentials");
+        
+        if (value === "manual") {
+            manualUpload.classList.remove("hidden"); // Show the whole container
+            uploadBtn.classList.remove("hidden");
+            resdexCredentials.classList.add("hidden");
+        } else if (value === "naukri") {
+            resdexCredentials.classList.remove("hidden");
+            manualUpload.classList.add("hidden");  // Hide the whole container
+            uploadBtn.classList.add("hidden");
+        } else {
+            fileUpload.classList.add("hidden");
+            uploadBtn.classList.add("hidden");
+            resdexCredentials.classList.add("hidden");
+        }
+    });
+</script>
+</body>
+</html>
