@@ -1,0 +1,50 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    font-family: 'Open Sans', sans-serif;
+}
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 650px; /* Controls the maximum width of the container */
+    max-height: 90vh; /* Sets a maximum height based on the viewport height */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    overflow-y: auto; /* Enables vertical scrolling if the content overflows */
+}
+
+.container:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.25);
+}
+.score-section, .analysis-section {
+    margin-bottom: 30px;
+}
+h2 {
+    color: #333;
+    font-weight: 600;
+}
+.score {
+    font-size: 48px;
+    color: #4CAF50; /* A green that's not too bright, but attractive */
+    margin-bottom: 20px;
+}
+.criteria {
+    margin-top: 20px;
+}
+.criteria h3 {
+    font-weight: 600;
+    color: #6e8efb; /* Harmonizes with the background gradient */
+    margin-bottom: 10px;
+}
+.criteria p {
+    font-weight: 300;
+    line-height: 1.6;
+}

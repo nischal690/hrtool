@@ -53,25 +53,9 @@ function showNextButton(container) {
 
     nextButton.addEventListener('click', function() {
       console.log('Next button clicked');
-      fetch('/trigger-scrap', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          console.log(data.message);
-      })
-      .catch((error) => {
-          console.error('Error:', error);
-      });
+      window.location.href = '/select-platform';
     });
+    
 
     container.appendChild(nextButton);
   }

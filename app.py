@@ -1,4 +1,5 @@
 import os
+import re
 import traceback
 from flask import Flask, jsonify, redirect, render_template, request
 import logging
@@ -14,7 +15,7 @@ from firebase_admin import credentials
 import subprocess
 from werkzeug.utils import secure_filename
 
-from uploadedresumeprocessing import process_uploaded_file
+from uploadedresumeprocessing import process_uploaded_file,calculate_resume_score_using_LLM
 
 cred = credentials.Certificate(r"hrtooljd-firebase-adminsdk-mbimv-45e1cfca77.json")
 firebase_admin.initialize_app(cred)
@@ -95,6 +96,7 @@ def chat():
 
 
 def confirm_evaluation(chathistory):
+    global jobDescripton
     print("Starting evaluation with chat history:")
     print(chathistory[:500])  # Print the first 500 characters of the chat history for a quick overview
 
@@ -166,6 +168,7 @@ Note: You are allowed to improvise both the scoring method and the job descripti
     print("Data storage operation completed.")
     fetch_scoring_method(doc_id)
     keyword_job_description(llm_output['job_description'],doc_id) 
+    jobDescripton = llm_output['job_description']
    
 
     
@@ -225,10 +228,20 @@ def upload():
         file.save('uploads/' + file.filename)  
 
         # Pass to fileprocessing module
-        process_uploaded_file(file, )
-        return redirect('/select-platform')  # Or any other relevant response
+        score = process_uploaded_file(file, jobDescripton )
+        score = float(score)
+        analysis = calculate_resume_score_using_LLM(file, jobDescripton, document)
+        print("analysis printed as :" +  analysis) 
+        processed = process_analysis_string(analysis)   
+        
+        
+        return render_template("resume_analysis.html", analysis = processed, score=score)   # Or any other relevant response
     else:
         return "No file was uploaded."
+@app.route("/resume-analysis")
+def resume_analysis():
+    return render_template("resume_analysis.html")  # Corrected
+
 
 @app.route('/trigger-scrap', methods=['POST'])
 def trigger_scrap():
@@ -310,6 +323,22 @@ Ensure that the keywords and experience you provide are meaningful and closely t
         print(traceback.format_exc())  # Print detailed error information
 
 print("LLM Output received successfully.") 
+def process_analysis_string(analysis):
+    # Split the analysis string by '**'
+    parts = re.split(r'\*\*(.*?)\*\*', analysis)
+    processed_parts = []
+    # Toggle to keep track of whether the part was inside ** or not
+    inside_stars = False
+    for part in parts:
+        if inside_stars:
+            # This part was inside **, wrap it with <h2>
+            processed_parts.append(f'<h2>{part}</h2>')
+        else:
+            # This part was outside **, wrap it with <p>, if it's not empty
+            if part.strip():
+                processed_parts.append(f'<p>{part}</p>')
+        inside_stars = not inside_stars  # Toggle the flag
+    return ''.join(processed_parts)
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0')
